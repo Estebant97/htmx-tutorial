@@ -1,0 +1,11 @@
+{
+  "name": "pokemon-playground",
+  "version": "1.0.0",
+  "scripts": {
+    "build:css": "npx tailwindcss -i ./static/index.css -o ./dist/output.css",
+    "start": "go run server.go"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.3"
+  }
+}

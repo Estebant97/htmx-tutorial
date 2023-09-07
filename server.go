@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"html/template"
 	"io"
 	"net/http"
@@ -30,6 +32,8 @@ func main() {
 	// Serve static files (e.g., CSS, JavaScript, and HTMX).
 	e.Static("/static", "static")
 
+	e.Static("/dist", "dist")
+
 	// Define a route for the main page.
 	e.GET("/", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "index.html", nil)
@@ -46,6 +50,27 @@ func main() {
 			content = "This is hidden"
 		}
 		return c.HTML(http.StatusOK, content)
+	})
+
+	e.GET("/pokemon/ditto", func(c echo.Context) error {
+		url := "https://pokeapi.co/api/v2/pokemon/ditto"
+		req, _ := http.NewRequest("GET", url, nil)
+
+		res, _ := http.DefaultClient.Do(req)
+		defer res.Body.Close()
+		body, _ := io.ReadAll(res.Body)
+
+		var data map[string]interface{}
+		err := json.Unmarshal([]byte(body), &data)
+		if err != nil {
+			fmt.Printf("could not unmarshal json: %s\n", err)
+			return c.HTML(http.StatusOK, "API error")
+		}
+		rawName := data["name"]
+		name := rawName.(string)
+
+		return c.HTML(http.StatusOK, fmt.Sprintf(`<p class="font-bold overline">%s</p>`, name))
+
 	})
 
 	// Start the server.
