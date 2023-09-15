@@ -64,12 +64,34 @@ func main() {
 		err := json.Unmarshal([]byte(body), &data)
 		if err != nil {
 			fmt.Printf("could not unmarshal json: %s\n", err)
-			return c.HTML(http.StatusOK, "API error")
+			return c.HTML(http.StatusBadRequest, "API error")
 		}
-		rawName := data["name"]
-		name := rawName.(string)
 
-		return c.HTML(http.StatusOK, fmt.Sprintf(`<p class="font-bold overline">%s</p>`, name))
+		// var sprites map[string]interface{}
+		rawName := data["name"]
+		sprites := data["sprites"].(map[string]interface{})
+		rawHeight := data["height"]
+		rawWeight := data["weight"]
+
+		name := rawName.(string)
+		imgUrl := sprites["front_default"].(string)
+		height := rawHeight.(float64) / 10
+		weight := rawWeight.(float64) / 10
+
+		return c.HTML(http.StatusOK, fmt.Sprintf(`	
+		<div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+		<a href="#">
+			<img class="rounded-t-lg" src="%s" alt="" />
+		</a>
+		<div class="p-5">
+			<a href="#">
+				<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Pokemon: %s</h5>
+			</a>
+			<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Weight: %v kg</p>
+			<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Height: %v m</p>
+			</div>
+		</div>
+		`, imgUrl, name, weight, height))
 
 	})
 
