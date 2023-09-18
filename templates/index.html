@@ -13,26 +13,26 @@
     <div class="hidden overline border-2 border-blue-500 flex h-auto"></div>
     <section class="container mx-auto">
       <h1 class="text-3xl font-bold underline">Random Pokemon</h1>
+      <button
+        id="toggle-button"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+        hx-target="#content"
+        hx-post="/toggle"
+        hx-trigger="click"
+      >
+        Toggle Content
+      </button>
+      <div id="content">This is hidden by default</div>
+      <button
+        id="fetch-pokemon"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+        hx-target="#pokemon"
+        hx-get="/pokemon/random"
+        hx-trigger="click"
+      >
+        Get random pokemon
+      </button>
+      <div id="pokemon" class="flex flex-col"></div>
     </section>
-    <button
-      id="toggle-button"
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-      hx-target="#content"
-      hx-post="/toggle"
-      hx-trigger="click"
-    >
-      Toggle Content
-    </button>
-    <div id="content">This is hidden by default</div>
-    <button
-      id="fetch-pokemon"
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-      hx-target="#pokemon"
-      hx-get="/pokemon/ditto"
-      hx-trigger="click"
-    >
-      Get random pokemon
-    </button>
-    <div id="pokemon"></div>
   </body>
 </html>

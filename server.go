@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"math/rand"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/labstack/echo"
 )
@@ -52,8 +55,10 @@ func main() {
 		return c.HTML(http.StatusOK, content)
 	})
 
-	e.GET("/pokemon/ditto", func(c echo.Context) error {
-		url := "https://pokeapi.co/api/v2/pokemon/ditto"
+	e.GET("/pokemon/random", func(c echo.Context) error {
+		rand.Seed(time.Now().UnixNano())
+		randNum := rand.Intn(1017)
+		url := fmt.Sprintf(`https://pokeapi.co/api/v2/pokemon/%v`, randNum)
 		req, _ := http.NewRequest("GET", url, nil)
 
 		res, _ := http.DefaultClient.Do(req)
@@ -73,16 +78,23 @@ func main() {
 		rawHeight := data["height"]
 		rawWeight := data["weight"]
 
-		name := rawName.(string)
+		castName := rawName.(string)
+		name := strings.Title(castName)
 		imgUrl := sprites["front_default"].(string)
+		imgShinyUrl := sprites["front_shiny"].(string)
 		height := rawHeight.(float64) / 10
 		weight := rawWeight.(float64) / 10
 
 		return c.HTML(http.StatusOK, fmt.Sprintf(`	
-		<div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+		<div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex-1">
+		<section class="inline-flex">
 		<a href="#">
-			<img class="rounded-t-lg" src="%s" alt="" />
+			<img class="rounded-t-lg w-40" src="%s" alt="normal pokemon" />
 		</a>
+		<a href="#">
+			<img class="rounded-t-lg w-40" src="%s" alt="shiny pokemon" />
+		</a>
+		</section>
 		<div class="p-5">
 			<a href="#">
 				<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Pokemon: %s</h5>
@@ -91,7 +103,7 @@ func main() {
 			<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Height: %v m</p>
 			</div>
 		</div>
-		`, imgUrl, name, weight, height))
+		`, imgUrl, imgShinyUrl, name, weight, height))
 
 	})
 
